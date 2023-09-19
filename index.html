@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivos</title>
+</head>
+<body>
+    <h1>Cargar archivos</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="files" multiple required>
+        <input type="submit" value="Cargar Archivos">
+    </form>
+
+    <h2>Lista de Archivos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Archivos</th>
+                <th>Ver</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody id="file-list">
+            <!-- Las filas de la tabla se generarán aquí -->
+        </tbody>
+    </table>
+
+    <script>
+        // Realiza una solicitud AJAX para obtener la lista de archivos
+        fetch('/file-list')
+            .then(response => response.json())
+            .then(data => {
+                const fileList = document.getElementById('file-list');
+                data.forEach(fileName => {
+                    const row = document.createElement('tr');
+                    const fileNameCell = document.createElement('td');
+                    fileNameCell.textContent = fileName;
+
+                    // Agrega un enlace en la segunda celda para ver el archivo
+                    const viewLinkCell = document.createElement('td');
+                    const viewLink = document.createElement('a');
+                    viewLink.textContent = getFileButtonText(fileName); // Aquí llamamos a una función para obtener el texto personalizado
+                    viewLink.href = `/view-file?fileName=${fileName}`; // Apunta a la página de visualización
+                    viewLinkCell.appendChild(viewLink);
+
+                    // Agrega un botón de editar en la tercera celda
+            const editButtonCell = document.createElement('td');
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Editar';
+            editButton.addEventListener('click', () => {
+                editFile(fileName); // Llama a la función para editar el archivo
+            });
+            editButtonCell.appendChild(editButton);
+
+                    // Agrega un botón de eliminar en la tercera celda
+            const deleteButtonCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Eliminar';
+            deleteButton.addEventListener('click', () => {
+                deleteFile(fileName); // Llama a la función para eliminar el archivo
+            });
+            deleteButtonCell.appendChild(deleteButton);
+
+                    row.appendChild(fileNameCell);
+                    row.appendChild(viewLinkCell);
+                    row.appendChild(editButtonCell);
+                    row.appendChild(deleteButtonCell);
+                    fileList.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener la lista de archivos:', error);
+            });
+
+        // Función para editar un archivo de texto
+        function editFile(fileName) {
+    window.location.href = `/edit-file?fileName=${fileName}`;
+}
+            // Función para eliminar un archivo
+function deleteFile(fileName) {
+    // Realiza una solicitud AJAX para eliminar el archivo del servidor
+    fetch(`/delete-file?fileName=${fileName}`, { method: 'DELETE' })
+        .then(response => {
+            if (response.ok) {
+                // Si la eliminación fue exitosa, actualiza la lista de archivos
+                refreshFileList();
+            } else {
+                console.error('Error al eliminar el archivo');
+            }
+        })
+        .catch(error => {
+            console.error('Error al eliminar el archivo:', error);
+        });
+}
+
+// Función para actualizar la lista de archivos después de eliminar uno
+function refreshFileList() {
+    // Limpia la lista de archivos actual
+    const fileList = document.getElementById('file-list');
+    fileList.innerHTML = '';
+
+    // Vuelve a cargar la lista de archivos actualizada
+    fetch('/file-list')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(fileName => {
+                const row = document.createElement('tr');
+                const fileNameCell = document.createElement('td');
+                fileNameCell.textContent = fileName;
+
+                // Agrega un enlace en la segunda celda para ver el archivo
+                const viewLinkCell = document.createElement('td');
+                const viewLink = document.createElement('a');
+                viewLink.textContent = getFileButtonText(fileName);
+                viewLink.href = `/view-file?fileName=${fileName}`;
+                viewLinkCell.appendChild(viewLink);
+
+                // Agrega un botón de eliminar en la tercera celda
+                const deleteButtonCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Eliminar';
+                deleteButton.addEventListener('click', () => {
+                    deleteFile(fileName); // Llama a la función para eliminar el archivo
+                });
+                deleteButtonCell.appendChild(deleteButton);
+
+                row.appendChild(fileNameCell);
+                row.appendChild(viewLinkCell);
+                row.appendChild(deleteButtonCell);
+
+                fileList.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener la lista de archivos:', error);
+        });
+
+
+}
+
+            function getFileButtonText(fileName) {
+    const fileExtension = fileName.split('.').pop().toLowerCase();
+
+    // Personaliza el texto del botón según la extensión
+    switch (fileExtension) {
+        case 'jpg':
+        case 'jpeg':
+            return 'Ver Imagen';
+        case 'png':
+            return 'Ver PNG';
+        case 'txt':
+            return 'Ver Texto';
+        // Agrega más casos según las extensiones de archivos que quieras personalizar
+        default:
+            return 'Descargar';
+    }
+}
+    </script>
+
+</body>
+</html>

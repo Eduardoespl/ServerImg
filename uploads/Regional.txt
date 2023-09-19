@@ -1,0 +1,94 @@
+--CREATE DATABASE Regional
+--use Regional
+
+create table corporativo_tiposucursal(
+	id_tiposucursal int identity(1,1) not null,
+	descripcion varchar(80)
+
+	constraint [PK_tiposucursal] primary key clustered (id_tiposucursal asc)
+)
+
+create table corporativo_sucursal(
+	id_sucursal int identity(1,1) not null,
+	nombre varchar(80),
+	direccion varchar(100),
+	telefono int,
+	encargado varchar(60),
+	id_tiposucursal int
+
+
+	constraint [PK_sucursal] primary key clustered (id_sucursal asc)
+)
+
+create table sucursal_envio(
+	id_envio int identity(1,1) not null,
+	fecha date,
+	id_sucursal int,
+
+	constraint [PK_envio] primary key clustered (id_envio asc)
+)
+
+create table pedido(
+	id_pedido int identity(1,1) not null,
+	fecha date,
+	id_envio int,
+
+	constraint [PK_pedido] primary key clustered (id_pedido asc)
+)
+
+create table pedido_sucursal(
+	id_pedido int,
+	id_sucursal int
+)
+
+create table entrada(
+	id_entrada int identity(1,1) not null,
+	fecha date,
+	hora time,
+	id_almacen int
+
+	constraint [PK_entrada] primary key clustered (id_entrada asc)
+)
+
+create table entrada_producto(
+	id_entrada int,
+	id_producto int,
+	cantidad int
+)
+
+create table salida(
+	id_salida int identity(1,1) not null,
+	fecha date,
+	hora time,
+	id_almacen int,
+	id_pedido int
+
+	constraint [PK_salida] primary key clustered (id_salida asc)
+)
+
+create table salida_producto(
+	id_salida int,
+	id_producto int,
+	cantidad int
+)
+
+create table almacen(
+	id_almacen int identity(1,1) not null,
+	fecha_reg date,
+	hora_reg time,
+	tipo_reg varchar(50),
+	cantidad int,
+
+	constraint [PK_almacen] primary key clustered (id_almacen asc)
+)
+
+create table corporativo_producto(
+	id_producto int identity(1,1) not null,
+	nombre varchar(60),
+	descripcion varchar(100),
+	cantidad int,
+	precio float,
+	id_almacen int
+
+	constraint [PK_producto] primary key clustered (id_producto asc)
+)
