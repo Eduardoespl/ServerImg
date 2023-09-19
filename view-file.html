@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ver Archivo</title>
 </head>
+
 <body>
     <h1>Contenido del Archivo</h1>
 
@@ -17,7 +19,7 @@
         // Función para mostrar contenido según el tipo de archivo
         function displayContent(content) {
             const fileContentDiv = document.getElementById('file-content');
-            
+
             // Verifica si el contenido es una imagen (puedes agregar más tipos)
             if (content.startsWith('data:image/')) {
                 // Si es una imagen, crea un elemento de imagen para mostrarla
@@ -41,4 +43,5 @@
             });
     </script>
 </body>
+
 </html>
